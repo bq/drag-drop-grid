@@ -1,0 +1,41 @@
+apply plugin: 'android-library'
+apply plugin: 'maven'
+
+version = '1.0'
+group = 'com.bq.robotic'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+// build JAR file
+task androidReleaseJar(type: Jar, dependsOn: assembleRelease) {
+    from "$buildDir/classes/release/"
+}
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact androidReleaseJar
+        }
+    }
+}
+
+// You have to use 'gradle publishToMavenLocal' in order to install the .jar in the local maven repository
+
