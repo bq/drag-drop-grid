@@ -1,9 +1,9 @@
 /*
-* This file is part of the RoboPad++
+* This file is part of the drag_drop_grid library
 *
 * Copyright (C) 2013 Mundo Reader S.L.
 * 
-* Date: February 2014
+* Date: March 2014
 * Author: Estefanía Sarasola Elvira <estefania.sarasola@bq.com>
 *
 * This program is free software: you can redistribute it and/or modify

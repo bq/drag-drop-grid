@@ -5,9 +5,6 @@
 
 package com.bq.robotic.drag_drop_grid;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -29,6 +26,9 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class DraggableGridView extends ViewGroup implements View.OnTouchListener, View.OnClickListener, View.OnLongClickListener {
@@ -333,7 +333,12 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 		if (!enabled) {
 			return;
 		}
-		
+
+        if (onItemClickListener != null && getLastIndex() != -1) {
+            onItemClickListener.onItemClick(null, getChildAt(getLastIndex()), getLastIndex(), getLastIndex() / colCount);
+            return;
+        }
+
 		int index = getLastIndex();
 		
 		if (index != -1) {
@@ -361,6 +366,16 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 			
 			return true;
 		}
+
+        int index = getLastIndex();
+
+        if (index != -1) {
+            dragged = index;
+            animateMoveAllItems();
+            animateDragged();
+            showDeleteView();
+            return true;
+        }
 		
 		return false;
 	}

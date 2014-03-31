@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ExampleDragDropGrid</string>
+    <string name="remove">Remove</string>
+
+    <string name="pollywog">Pollywog</string>
+    <string name="beetle">Beetle</string>
+    <string name="rhino">Rhino</string>
+    <string name="crab">Crab</string>
+    <string name="generic_robot">Generic robot</string>
+
+    <string name="on_click_text">"You clicked on item "</string>
+    <string name="on_long_click_text">"You made a long click on item "</string>
+
+</resources>

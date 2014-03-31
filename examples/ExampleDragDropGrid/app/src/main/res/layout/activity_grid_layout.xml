@@ -1,0 +1,99 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bq.robotic.exampledragdropgrid.app.GridLayout">
+
+    <ImageButton
+        android:id="@+id/remove_all_button"
+        android:layout_width="@dimen/scheduler_control_height"
+        android:layout_height="@dimen/scheduler_control_height"
+        android:src="@android:drawable/ic_menu_delete"
+        android:layout_alignParentRight="true"
+        android:scaleType="centerCrop"
+        android:tint="@color/blue_dark"
+        android:onClick="onButtonClick" />
+
+    <HorizontalScrollView
+        android:id="@+id/controls_layout_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/scheduler_control_height"
+        android:layout_marginRight="3dp"
+        android:layout_toLeftOf="@id/remove_all_button"
+        android:background="@color/blue_dark" >
+
+        <LinearLayout
+            android:id="@+id/controls_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/pollywog_button"
+                android:layout_width="@dimen/scheduler_control_height"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/bot_pollywog_action_bar_icon"
+                android:onClick="onButtonClick" />
+
+            <ImageButton
+                android:id="@+id/beetle_button"
+                android:layout_width="@dimen/scheduler_control_height"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/bot_beetle"
+                android:onClick="onButtonClick"/>
+
+            <ImageButton
+                android:id="@+id/rhino_button"
+                android:layout_width="@dimen/scheduler_control_height"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/bot_rhino"
+                android:onClick="onButtonClick"/>
+
+            <ImageButton
+                android:id="@+id/crab_button"
+                android:layout_width="@dimen/scheduler_control_height"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/bot_crab"
+                android:onClick="onButtonClick"/>
+
+            <ImageButton
+                android:id="@+id/generic_robot_button"
+                android:layout_width="@dimen/scheduler_control_height"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/bot_generic"
+                android:onClick="onButtonClick"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <com.bq.robotic.drag_drop_grid.DraggableGridView
+        android:id="@+id/grid_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/controls_layout_view"
+        android:background="@android:color/white" />
+
+    <com.bq.robotic.drag_drop_grid.DeleteDropZoneView
+        android:id="@+id/delete_view"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="55dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:visibility="invisible"
+        android:text="@string/remove" />
+
+</RelativeLayout>

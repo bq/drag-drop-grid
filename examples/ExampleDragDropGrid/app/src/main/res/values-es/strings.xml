@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ExampleDragDropGrid</string>
+    <string name="remove">Eliminar</string>
+
+    <string name="pollywog">Renacuajo</string>
+    <string name="beetle">Escarabajo</string>
+    <string name="rhino">Rhino</string>
+    <string name="crab">Cangrejo</string>
+    <string name="generic_robot">Robot genérico</string>
+
+    <string name="on_click_text">"Has pulsado el objeto número "</string>
+    <string name="on_long_click_text">"Has hecho una pulsación larga en el objeto número "</string>
+
+</resources>
