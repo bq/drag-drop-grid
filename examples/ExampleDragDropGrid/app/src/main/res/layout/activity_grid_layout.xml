@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.bq.robotic.exampledragdropgrid.app.GridLayout">
+    android:gravity="center"
+    tools:context="com.bq.robotic.exampledragdropgrid.app.GridLayout" >
 
     <ImageButton
         android:id="@+id/remove_all_button"
@@ -20,14 +21,14 @@
         android:layout_height="@dimen/scheduler_control_height"
         android:layout_marginRight="3dp"
         android:layout_toLeftOf="@id/remove_all_button"
-        android:background="@color/blue_dark" >
+        android:background="@color/blue_dark">
 
         <LinearLayout
             android:id="@+id/controls_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/pollywog_button"
@@ -36,7 +37,7 @@
                 android:scaleType="centerCrop"
                 android:layout_marginRight="5dp"
                 android:layout_marginLeft="5dp"
-                android:src="@drawable/bot_pollywog_action_bar_icon"
+                android:src="@drawable/bot_pollywog"
                 android:onClick="onButtonClick" />
 
             <ImageButton
@@ -81,8 +82,9 @@
         android:id="@+id/grid_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/controls_layout_view"
-        android:background="@android:color/white" />
+        android:background="@android:color/white"/>
 
     <com.bq.robotic.drag_drop_grid.DeleteDropZoneView
         android:id="@+id/delete_view"

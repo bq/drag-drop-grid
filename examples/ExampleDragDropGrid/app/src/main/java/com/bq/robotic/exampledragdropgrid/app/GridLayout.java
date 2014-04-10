@@ -102,6 +102,11 @@ public class GridLayout extends ActionBarActivity {
                 }
 
                 if(isDraggedDeleted) {
+
+                    Toast.makeText(GridLayout.this.getBaseContext(), getString(R.string.on_deleted_view)
+                                    + imagesList.get(draggedDeletedIndex) + getString(R.string.numbered)
+                                    + draggedDeletedIndex, Toast.LENGTH_SHORT).show();
+
                     imagesList.remove(draggedDeletedIndex);
                 }
             }
@@ -115,7 +120,8 @@ public class GridLayout extends ActionBarActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Toast.makeText(GridLayout.this.getBaseContext(), getString(R.string.on_click_text)
-                        + position, Toast.LENGTH_SHORT).show();
+                        + imagesList.get(position) + getString(R.string.numbered) + position,
+                        Toast.LENGTH_SHORT).show();
 			}
 		});
 
@@ -129,7 +135,9 @@ public class GridLayout extends ActionBarActivity {
 //            @Override
 //            public boolean onItemLongClick(AdapterView<?> parent, View view,
 //                                           int position, long id) {
-//                Toast.makeText(GridLayout.this.getBaseContext(), getString(R.string.on_long_click_text) + position, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(GridLayout.this.getBaseContext(), getString(R.string.on_long_click_text)
+//                       + imagesList.get(position) + getString(R.string.numbered) + position,
+//                      Toast.LENGTH_SHORT).show();
 //                return true;
 //            }
 //        });
@@ -157,14 +165,14 @@ public class GridLayout extends ActionBarActivity {
                 break;
 
             case R.id.beetle_button:
-//                view.setImageResource(R.drawable.bot_beetle);
-                view.setImageBitmap(getThumb(getString(R.string.beetle)));
+                view.setImageResource(R.drawable.bot_beetle);
                 gridView.addView(view);
                 imagesList.add(getString(R.string.beetle));
                 break;
 
             case R.id.rhino_button:
-                view.setImageResource(R.drawable.bot_rhino);
+//                view.setImageResource(R.drawable.bot_rhino);
+                view.setImageBitmap(getThumb(getString(R.string.rhino)));
                 gridView.addView(view);
                 imagesList.add(getString(R.string.rhino));
                 break;
@@ -192,21 +200,19 @@ public class GridLayout extends ActionBarActivity {
 
 
     private Bitmap getThumb(String text) {
-        int sizeBitmap = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 88, getResources().getDisplayMetrics());
-        Bitmap bmp = Bitmap.createBitmap(sizeBitmap, sizeBitmap, Bitmap.Config.RGB_565);
+        int sizeBitmap = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, getResources().getDisplayMetrics());
+        Bitmap bmp = Bitmap.createBitmap(sizeBitmap, sizeBitmap/2, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint();
 
         Random random = new Random();
         paint.setColor(Color.rgb(random.nextInt(128), random.nextInt(128), random.nextInt(128)));
-        paint.setTextSize(24);
+        paint.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 20, getResources().getDisplayMetrics()));
         paint.setFlags(Paint.ANTI_ALIAS_FLAG);
-//        canvas.drawRect(new Rect(0, 0, 100, 100), paint);
-        canvas.drawRect(new Rect(0, 0, sizeBitmap, sizeBitmap), paint);
+        canvas.drawRect(new Rect(0, 0, sizeBitmap, sizeBitmap/2), paint);
         paint.setColor(Color.WHITE);
         paint.setTextAlign(Paint.Align.CENTER);
-//        canvas.drawText(text, 50, 50, paint);
-        canvas.drawText(text, sizeBitmap/2, sizeBitmap/2, paint);
+        canvas.drawText(text, sizeBitmap/2, sizeBitmap/3, paint);
 
         return bmp;
     }

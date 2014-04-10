@@ -12,5 +12,7 @@
 
     <string name="on_click_text">"You clicked on item "</string>
     <string name="on_long_click_text">"You made a long click on item "</string>
+    <string name="numbered">", number "</string>
+    <string name="on_deleted_view">"You has removed the item "</string>
 
 </resources>

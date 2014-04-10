@@ -2,7 +2,7 @@
 * This file is part of the drag_drop_grid library
 *
 * Copyright (C) 2013 Mundo Reader S.L.
-* 
+*
 * Date: March 2014
 * Author: Estefanía Sarasola Elvira <estefania.sarasola@bq.com>
 *
@@ -34,58 +34,58 @@ import android.widget.Button;
 
 public class DeleteDropZoneView extends Button {
 
-	private boolean straight = true;
+    private boolean straight = true;
 
 
-	public DeleteDropZoneView(Context context) {
-		super(context);
+    public DeleteDropZoneView(Context context) {
+        super(context);
 
-		setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_delete, 0, 0, 0);
-		setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7, getResources().getDisplayMetrics()));
+        setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_delete, 0, 0, 0);
+        setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7, getResources().getDisplayMetrics()));
 
-		setTextColor(Color.WHITE);
-		setBackgroundColor(Color.BLACK);
-		getBackground().setAlpha(200);
-		
-	}
-	
-	
-	public DeleteDropZoneView(Context context, AttributeSet attrs) {
-		super(context, attrs);
+        setTextColor(Color.WHITE);
+        setBackgroundColor(Color.BLACK);
+        getBackground().setAlpha(200);
 
-		setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_delete, 0, 0, 0);
-		setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7, getResources().getDisplayMetrics()));
-
-		setTextColor(Color.WHITE);
-		setBackgroundColor(Color.BLACK);
-		getBackground().setAlpha(200);
-		
-	}
-	
-
-	@Override
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-
-		if (straight) {
-			setBackgroundColor(Color.BLACK);
-			getBackground().setAlpha(200);
-		} else {
-			setBackgroundColor(Color.RED);
-			getBackground().setAlpha(200);
-		}
-	}
+    }
 
 
-	public void highlight() {
-		straight = false;
-		invalidate();
-	}
+    public DeleteDropZoneView(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
-	public void smother() {
-		straight = true;
-		invalidate();
-	}
+        setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_delete, 0, 0, 0);
+        setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7, getResources().getDisplayMetrics()));
 
-	
+        setTextColor(Color.WHITE);
+        setBackgroundColor(Color.BLACK);
+        getBackground().setAlpha(200);
+
+    }
+
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        if (straight) {
+            setBackgroundColor(Color.BLACK);
+            getBackground().setAlpha(200);
+        } else {
+            setBackgroundColor(Color.RED);
+            getBackground().setAlpha(200);
+        }
+    }
+
+
+    public void highlight() {
+        straight = false;
+        invalidate();
+    }
+
+    public void smother() {
+        straight = true;
+        invalidate();
+    }
+
+
 }

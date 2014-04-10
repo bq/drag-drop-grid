@@ -10,7 +10,9 @@
     <string name="crab">Cangrejo</string>
     <string name="generic_robot">Robot genérico</string>
 
-    <string name="on_click_text">"Has pulsado el objeto número "</string>
-    <string name="on_long_click_text">"Has hecho una pulsación larga en el objeto número "</string>
+    <string name="on_click_text">"Has pulsado el objeto "</string>
+    <string name="on_long_click_text">"Has hecho una pulsación larga en el objeto "</string>
+    <string name="numbered">", número "</string>
+    <string name="on_deleted_view">"Has eliminado el objeto "</string>
 
 </resources>
