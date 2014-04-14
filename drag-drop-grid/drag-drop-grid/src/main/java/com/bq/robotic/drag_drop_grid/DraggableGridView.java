@@ -1,7 +1,25 @@
-//TO DO:
-//
-// - improve timer performance (especially on Eee Pad)
-// - improve child rearranging
+/*
+* This file is part of the drag_drop_grid library
+*
+* Copyright (C) 2013 Mundo Reader S.L.
+*
+* Date: April 2014
+* Author: Estefanía Sarasola Elvira <estefania.sarasola@bq.com>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*
+*/
 
 package com.bq.robotic.drag_drop_grid;
 
@@ -29,56 +47,73 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 
 
 public class DraggableGridView extends ViewGroup implements View.OnTouchListener, View.OnClickListener, View.OnLongClickListener {
-    //layout vars
-    protected int colCount, childWidthSize, childHeightSize, padding, scroll = 0;
+    // Layout vars
+    protected int columnCount, scroll = 0;
+    protected int numberOfColumns = 0; // if want to set a fixed value for the columns
     protected float lastDelta = 0;
     protected Handler handler = new Handler();
-    //dragging vars
+
+    protected boolean centerChildrenInGrid = false;
+
+    // Dragging
     protected int dragged = -1, lastX = -1, lastY = -1, lastTarget = -1;
     protected boolean enabled = true, touching = false;
-    //anim vars
+
+    // Animation
     public static int animT = 150;
     protected ArrayList<Integer> newPositions = new ArrayList<Integer>();
-    //listeners
+
+    // Listeners
     protected OnRearrangeListener onRearrangeListener;
-    protected OnClickListener secondaryOnClickListener;
+    //	protected OnClickListener secondaryOnClickListener;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
+
     // Context
     Context context;
-    //delete zone
+
+    // Delete zone
     private DeleteDropZoneView deleteZone;
     private boolean draggedInDeleteZone = false;
 
-    private int biggestChildWidth;
-    private int biggestChildHeight;
-    private float screenWidth;
+    // Manage child sizes and padding
+    protected int biggestChildWidth, biggestChildHeight;
+    protected int biggestChildHorizontalPadding, gridPaddingWidth;
+    protected float screenWidth;
 
     // Debugging
     private static final String LOG_TAG = "DraggableGridView";
 
-    //CONSTRUCTOR AND HELPERS
-    public DraggableGridView (Context context, AttributeSet attrs) {
+    /***********************************************************************************************
+     *                                      CONSTRUCTORS                                           *
+     **********************************************************************************************/
+
+    /**
+     * XML constructors
+     */
+    public DraggableGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+
         setListeners();
+
         handler.removeCallbacks(updateTask);
         handler.postAtTime(updateTask, SystemClock.uptimeMillis() + 500);
         setChildrenDrawingOrderEnabled(true);
 
-        padding = getPaddingLeft();
+        gridPaddingWidth = ((getPaddingLeft() > getPaddingRight()) ? getPaddingLeft() : getPaddingRight());
+
+//        Log.d(LOG_TAG, "Padding grid: " + getPaddingLeft());
 
     }
 
 
-    //CONSTRUCTOR AND HELPERS
-    public DraggableGridView (Context context, AttributeSet attrs, int defStyle) {
+    public DraggableGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         this.context = context;
@@ -87,13 +122,15 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         handler.postAtTime(updateTask, SystemClock.uptimeMillis() + 500);
         setChildrenDrawingOrderEnabled(true);
 
-        padding = getPaddingLeft();
+        biggestChildHorizontalPadding = getPaddingLeft();
 
     }
 
 
-    //CONSTRUCTOR AND HELPERS
-    public DraggableGridView (Context context) {
+    /**
+     * Programmatically constructor
+     */
+    public DraggableGridView(Context context) {
         super(context);
 
         this.context = context;
@@ -104,31 +141,17 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
-    public void setDeleteZone(DeleteDropZoneView deleteZone) {
-        this.deleteZone = deleteZone;
-    }
-
-
-    protected void setListeners() {
-        setOnTouchListener(this);
-        super.setOnClickListener(this);
-        setOnLongClickListener(this);
-    }
-
-
-    @Override
-    public void setOnClickListener(OnClickListener l) {
-        secondaryOnClickListener = l;
-    }
-
-
+    /**
+     * Task for the scrolling and repaint the layout
+     */
     protected Runnable updateTask = new Runnable() {
         public void run() {
 
             if (dragged != -1) {
-                if (lastY < padding * 3 && scroll > 0) {
+                if (lastY < biggestChildHorizontalPadding * 3 && scroll > 0) {
                     scroll -= 20;
-                } else if (lastY > getBottom() - getTop() - (padding * 3) && scroll < getMaxScroll()) {
+                } else if (lastY > getBottom() - getTop() - (biggestChildHorizontalPadding * 3)
+                        && scroll < getMaxScroll()) {
                     scroll += 20;
                 }
 
@@ -148,19 +171,75 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     };
 
 
-    /*
-     * MANAGE VIEWS
+    /***********************************************************************************************
+     *                                   GETTERS AND SETTERS                                       *
+     **********************************************************************************************/
+
+    /**
+     * Set a fixed number of columns for the grid, if there is enough space available
+     *
+     * @param numberOfColumns desired number of columns
+     */
+    public void setNumberOfColumns(int numberOfColumns) {
+        this.numberOfColumns = numberOfColumns;
+    }
+
+
+    /**
+     * Get the fixed number of columns set if there is space enough for them
+     *
+     * @return the fixed number of columns
+     */
+    public int getNumberOfColumns() {
+        return numberOfColumns;
+    }
+
+
+    /**
+     * Checks if it is set that the children of the grid must be centered
+     *
+     * @return if the children are centered in teh grid or not
+     */
+    public boolean isCenterChildrenInGrid() {
+        return centerChildrenInGrid;
+    }
+
+
+    /**
+     * Set if the children must be centered in the grid or not
+     *
+     * @param centerChildrenInGrid set if the children are centered in teh grid or not
+     */
+    public void setCenterChildrenInGrid(boolean centerChildrenInGrid) {
+        this.centerChildrenInGrid = centerChildrenInGrid;
+    }
+
+
+    /***********************************************************************************************
+     *                                       MANAGE CHILDREN                                       *
+     **********************************************************************************************/
+
+    /**
+     * And a new child
+     *
+     * @param child a new child
      */
     @Override
     public void addView(View child) {
         super.addView(child);
         newPositions.add(-1);
 
-        if(deleteZone != null) {
+        if (deleteZone != null) {
             deleteZone.bringToFront();
         }
     }
 
+
+    /**
+     * Remove a child
+     *
+     * @param index the index of the child to remove
+     */
     @Override
     public void removeViewAt(int index) {
         super.removeViewAt(index);
@@ -168,12 +247,19 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Remove all children
+     */
     public void removeAll() {
         super.removeAllViews();
         newPositions.clear();
         invalidate();
     }
 
+
+    /***********************************************************************************************
+     *                                  MANAGE CHILDREN POSITIONS                                  *
+     **********************************************************************************************/
 
     /**
      * Ask all children to measure themselves and compute the measurement of this
@@ -189,12 +275,21 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
 
-        measureChild(deleteZone, MeasureSpec.makeMeasureSpec(display.getWidth(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec((int)getPixelFromDip(40), MeasureSpec.EXACTLY));
+        if (deleteZone != null) {
+            measureChild(deleteZone, MeasureSpec.makeMeasureSpec(display.getWidth(), MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec((int) getPixelFromDip(40), MeasureSpec.EXACTLY));
+        }
 
         setMeasuredDimension(widthSize, heightSize);
     }
 
 
+    /**
+     * Manage where to position the children (the ImageViews) in the grid layout.
+     * We find out how many columns are needed to arrange the children's views, attending to the
+     * biggest padding of all the children an using it for all children, in order to have the same
+     * number of columns in all rows.
+     */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
@@ -205,40 +300,47 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         float screenWidthAux = screenWidth;
 
         searchBiggestChildMeasures();
-        int sub = biggestChildWidth;
-        colCount = 0;
+        columnCount = 0;
 
+        screenWidthAux -= biggestChildHorizontalPadding - gridPaddingWidth;
+
+        // Get the number of columns
         for (int i = 0; i < getChildCount(); i++) {
-            if(screenWidthAux < sub) {
+            if (screenWidthAux < biggestChildWidth) {
                 break;
             }
 
-            colCount++;
-            screenWidthAux -= sub;
+            columnCount++;
+            screenWidthAux -= biggestChildWidth + biggestChildHorizontalPadding;
         }
 
-        childWidthSize = biggestChildWidth;
-        childHeightSize = biggestChildHeight;
+        // If it was set a fixed number of columns programmatically and it isn't bigger than the
+        // number of columns available for the current views, the columnCount is that fixed number
+        if (numberOfColumns > 0 && numberOfColumns < columnCount) {
+            columnCount = numberOfColumns;
+        }
 
+        // Request layout its children at specific positions
         for (int i = 0; i < getChildCount(); i++) {
             if (i != dragged) {
                 Point xy = getCoorFromIndex(i);
-                getChildAt(i).layout(xy.x, xy.y, xy.x + childWidthSize, xy.y + childHeightSize);
+                getChildAt(i).layout(xy.x, xy.y, xy.x + biggestChildWidth, xy.y + biggestChildHeight);
             }
         }
 
     }
 
 
-    private float getPixelFromDip(int size) {
-        Resources res = context.getResources();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, res.getDisplayMetrics());
-    }
-
-
+    /**
+     * Searches for the child with the biggest measure values such as width, height and horizontal
+     * padding in order to set tis sizes for all the children, for getting the same number of children
+     * in each row and column
+     */
     private void searchBiggestChildMeasures() {
         biggestChildWidth = 0;
         biggestChildHeight = 0;
+        biggestChildHorizontalPadding = 0;
+
         for (int index = 0; index < getChildCount(); index++) {
             View child = getChildAt(index);
 
@@ -249,10 +351,21 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
             if (biggestChildWidth < child.getMeasuredWidth()) {
                 biggestChildWidth = child.getMeasuredWidth();
             }
+
+            if (biggestChildHorizontalPadding < child.getPaddingLeft()) {
+                biggestChildHorizontalPadding = child.getPaddingLeft();
+            }
+
+            if (biggestChildHorizontalPadding < child.getPaddingRight()) {
+                biggestChildHorizontalPadding = child.getPaddingRight();
+            }
         }
     }
 
 
+    /**
+     * Get the order to draw the children depending on if it has been dragged or not
+     */
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
 
@@ -269,6 +382,84 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Reorder children
+     */
+    protected void reorderChildren() {
+        //FIXME: FIGURE OUT HOW TO REORDER CHILDREN WITHOUT REMOVING THEM ALL AND RECONSTRUCTING THE LIST!!!
+
+        ArrayList<View> children = new ArrayList<View>();
+        for (int i = 0; i < getChildCount(); i++) {
+            getChildAt(i).clearAnimation();
+            children.add(getChildAt(i));
+        }
+
+        removeAllViews();
+
+        if (draggedInDeleteZone) { // dragged in deleted zone
+            children.remove(dragged);
+
+
+            if (onRearrangeListener != null) {
+                onRearrangeListener.onRearrange(true, dragged);
+            }
+
+        } else {
+
+            if (onRearrangeListener != null) {
+                onRearrangeListener.onRearrange(dragged, lastTarget);
+            }
+
+            while (dragged != lastTarget) {
+                if (lastTarget == children.size()) { // dragged and dropped to the right of the last element
+                    children.add(children.remove(dragged));
+                    dragged = lastTarget;
+
+                } else if (dragged < lastTarget) { // shift to the right
+                    Collections.swap(children, dragged, dragged + 1);
+                    dragged++;
+
+                } else if (dragged > lastTarget) { // shift to the left
+                    Collections.swap(children, dragged, dragged - 1);
+                    dragged--;
+                }
+            }
+        }
+
+        for (int i = 0; i < children.size(); i++) {
+            newPositions.set(i, -1);
+            addView(children.get(i));
+        }
+
+        if (deleteZone != null) {
+            deleteZone.bringToFront();
+        }
+
+        requestLayout();
+    }
+
+
+    /***********************************************************************************************
+     *                     SEARCH FOR CHILDREN AND COORDINATES METHODS                             *
+     **********************************************************************************************/
+
+    /**
+     * Gets the index of the child given by the last position of the finger or mouse in the screen
+     *
+     * @return the index of the child that the user pressed lastly
+     */
+    public int getLastIndex() {
+        return getIndexFromCoor(lastX, lastY);
+    }
+
+
+    /**
+     * Gets the index of this child depending on its coordinates in the layout
+     *
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return the index of the view
+     */
     public int getIndexFromCoor(int x, int y) {
         int col = getColFromCoor(x);
         int row = getRowFromCoor(y + scroll);
@@ -277,7 +468,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
             return -1;
         }
 
-        int index = row * colCount + col;
+        int index = row * columnCount + col;
 
         if (index >= getChildCount()) {
             return -1;
@@ -287,38 +478,51 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Gets the number of the column where the child is by its x coordinate
+     *
+     * @param coor x coordinate
+     * @return number of the column
+     */
     protected int getColFromCoor(int coor) {
-        coor -= padding;
+        coor -= biggestChildHorizontalPadding + gridPaddingWidth;
 
         int widthForHorizontalCentering = 0;
-        float emptySpaceInGrid = screenWidth - ((childWidthSize + padding) * colCount);
+        float emptySpaceInGrid = screenWidth - gridPaddingWidth * 2 - biggestChildHorizontalPadding
+                - ((biggestChildWidth + biggestChildHorizontalPadding) * columnCount);
 
-        if(emptySpaceInGrid < childWidthSize + padding) {
+        if (centerChildrenInGrid || emptySpaceInGrid < biggestChildWidth + biggestChildHorizontalPadding) {
             widthForHorizontalCentering = Math.round(emptySpaceInGrid / 2);
         }
 
         coor -= widthForHorizontalCentering;
 
         for (int i = 0; coor > 0; i++) {
-            if (coor < childWidthSize) {
+            if (coor < biggestChildWidth) {
                 return i;
             }
 
-            coor -= (childWidthSize + padding);
+            coor -= (biggestChildWidth + biggestChildHorizontalPadding);
         }
         return -1;
     }
 
 
+    /**
+     * Gets the number of the row where the child is by its y coordinate
+     *
+     * @param coor y coordinate
+     * @return number of the row
+     */
     protected int getRowFromCoor(int coor) {
-        coor -= padding;
+        coor -= biggestChildHorizontalPadding + getPaddingTop();
 
         for (int i = 0; coor > 0; i++) {
-            if (coor < childHeightSize) {
+            if (coor < biggestChildHeight) {
                 return i;
             }
 
-            coor -= (childHeightSize + padding);
+            coor -= (biggestChildHeight + biggestChildHorizontalPadding);
         }
         return -1;
     }
@@ -329,8 +533,8 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
             return -1;
         }
 
-        int leftPos = getIndexFromCoor(x - (childWidthSize / 4), y);
-        int rightPos = getIndexFromCoor(x + (childWidthSize / 4), y);
+        int leftPos = getIndexFromCoor(x - (biggestChildWidth / 4), y);
+        int rightPos = getIndexFromCoor(x + (biggestChildWidth / 4), y);
 
         if (leftPos == -1 && rightPos == -1) { //touch is in the middle of nowhere
             return -1;
@@ -356,21 +560,42 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         return target;
     }
 
+
+    /**
+     * Get the coordinates positions of a child given the index of it
+     *
+     * @param index of teh child
+     * @return the coordinates of the top left point of the child view
+     */
     protected Point getCoorFromIndex(int index) {
-        int col = index % colCount;
-        int row = index / colCount;
+        int col = index % columnCount;
+        int row = index / columnCount;
         int widthForHorizontalCentering = 0;
 
-        float emptySpaceInGrid = screenWidth - ((childWidthSize + padding) * colCount);
+        // For centering the children if there isn't room for more children
+        float emptySpaceInGrid = screenWidth - gridPaddingWidth * 2 - biggestChildHorizontalPadding
+                - ((biggestChildWidth + biggestChildHorizontalPadding) * columnCount);
 
-        if(emptySpaceInGrid < childWidthSize + padding) {
+        if (centerChildrenInGrid || emptySpaceInGrid < biggestChildWidth + biggestChildHorizontalPadding) {
             widthForHorizontalCentering = Math.round(emptySpaceInGrid / 2);
         }
 
-        return new Point(widthForHorizontalCentering + padding + (childWidthSize + padding) * col,
-                padding + (childHeightSize + padding) * row - scroll);
+        // Take care about the padding of each child and the padding of the grid view itself
+        // You return the coordinates of the top left point of the child view
+        return new Point(widthForHorizontalCentering + gridPaddingWidth + biggestChildHorizontalPadding
+                + (biggestChildWidth + biggestChildHorizontalPadding) * col,
+                getPaddingTop() + biggestChildHorizontalPadding + (biggestChildHeight
+                        + biggestChildHorizontalPadding) * row - scroll
+        );
     }
 
+
+    /**
+     * Get the index of a child
+     *
+     * @param child the child of who you want to know the index
+     * @return the index of the child
+     */
     public int getIndexOf(View child) {
 
         for (int i = 0; i < getChildCount(); i++) {
@@ -383,21 +608,30 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /***********************************************************************************************
+     *                                      EVENT HANDLERS                                         *
+     **********************************************************************************************/
+
     /**
-     * EVENT HANDLERS
+     * Manage the onClick events. The default behaviour is drag-drop functionality, but it can manage
+     * other functionality if it is set in the Activity a new onItemClick listener
+     *
+     * @param view which was clicked
      */
     public void onClick(View view) {
-        if (!enabled) {
-            return;
-        }
-
-        if (onItemClickListener != null && getLastIndex() != -1) {
-            onItemClickListener.onItemClick(null, getChildAt(getLastIndex()), getLastIndex(), getLastIndex() / colCount);
+        if (!enabled || getChildCount() == 0) {
             return;
         }
 
         int index = getLastIndex();
 
+        // Other functionality set with a new onItemClick listener
+        if (onItemClickListener != null && index != -1) {
+            onItemClickListener.onItemClick(null, getChildAt(getLastIndex()), getLastIndex(), getLastIndex() / columnCount);
+            return;
+        }
+
+        // Default behaviour: drag-drop
         if (index != -1) {
             dragged = index;
             animateMoveAllItems();
@@ -409,19 +643,28 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Manage the onLongClick events. The default behaviour is drag-drop functionality, but it can
+     * manage other functionality if it is set in the Activity a new onItemLongClick listener
+     *
+     * @param view which was long clicked
+     */
     public boolean onLongClick(View view) {
-        if (!enabled) {
+        if (!enabled || getChildCount() == 0) {
             return false;
-        }
-
-        if (onItemLongClickListener != null && getLastIndex() != -1) {
-            onItemLongClickListener.onItemLongClick(null, getChildAt(getLastIndex()), getLastIndex(), getLastIndex() / colCount);
-
-            return true;
         }
 
         int index = getLastIndex();
 
+        // Other functionality set with a new onItemClick listener
+        if (onItemLongClickListener != null && index != -1) {
+            onItemLongClickListener.onItemLongClick(null, getChildAt(getLastIndex()), getLastIndex(),
+                    getLastIndex() / columnCount);
+
+            return true;
+        }
+
+        // Default behaviour: drag-drop
         if (index != -1) {
             dragged = index;
             animateMoveAllItems();
@@ -434,6 +677,13 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Manage touch events
+     *
+     * @param view  the view touched
+     * @param event the event for that view
+     * @return managed the touch event or not
+     */
     public boolean onTouch(View view, MotionEvent event) {
         int action = event.getAction();
 
@@ -447,68 +697,11 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                int delta = lastY - (int)event.getY();
-
-                invalidate();
-
-                if (dragged != -1) {
-                    //change draw location of dragged visual
-                    int x = (int)event.getX();
-                    int y = (int)event.getY();
-                    int l = x - (3 * childWidthSize / 4);
-                    int t = y - (3 * childHeightSize / 4);
-                    getChildAt(dragged).layout(l, t, l + (childWidthSize * 3 / 2), t + (childHeightSize * 3 / 2));
-
-                    //check for new target hover
-                    int target = getTargetFromCoor(x, y);
-                    if (lastTarget != target) {
-                        if (target != -1) {
-                            animateGap(target);
-                            lastTarget = target;
-                        }
-                    }
-
-                } else {
-                    scroll += delta;
-                    clampScroll();
-                    if (Math.abs(delta) > 2) {
-                        enabled = false;
-                    }
-                    requestLayout();
-                }
-
-                lastX = (int) event.getX();
-                lastY = (int) event.getY();
-                manageDeleteZoneHover(lastX, lastY);
-                lastDelta = delta;
+                manageMoveEvent(event);
                 break;
 
             case MotionEvent.ACTION_UP:
-                if (dragged != -1) {
-                    View v = getChildAt(dragged);
-
-                    if(touchUpInDeleteZoneDrop(lastX, lastY)) {
-                        draggedInDeleteZone = true;
-                        reorderChildren();
-
-                    } else if (lastTarget != -1) {
-                        reorderChildren();
-                    } else {
-                        Point xy = getCoorFromIndex(dragged);
-                        v.layout(xy.x, xy.y, xy.x + childWidthSize, xy.y + childHeightSize);
-                    }
-
-                    if (v instanceof ImageView) {
-                        ((ImageView)v).setAlpha(255);
-                    }
-
-                    lastTarget = -1;
-                    dragged = -1;
-                    hideDeleteView();
-                    draggedInDeleteZone = false;
-                }
-                touching = false;
-                cancelAnimations();
+                manageUpEvent();
                 break;
         }
 
@@ -520,19 +713,99 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
-    /*
-     * ANIMATIONS
+    /**
+     * Manage the move event when dragging a child
+     *
+     * @param event move event
+     */
+    protected void manageMoveEvent(MotionEvent event) {
+        int delta = lastY - (int) event.getY();
+        invalidate();
+
+        if (dragged != -1) {
+            //change draw location of dragged visual
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+            int l = x - (3 * biggestChildWidth / 4);
+            int t = y - (3 * biggestChildHeight / 4);
+            getChildAt(dragged).layout(l, t, l + (biggestChildWidth * 3 / 2), t
+                    + (biggestChildHeight * 3 / 2));
+
+            //check for new target hover
+            int target = getTargetFromCoor(x, y);
+            if (lastTarget != target) {
+                if (target != -1) {
+                    animateGap(target);
+                    lastTarget = target;
+                }
+            }
+
+        } else {
+            scroll += delta;
+            clampScroll();
+            if (Math.abs(delta) > 2) {
+                enabled = false;
+            }
+            requestLayout();
+        }
+
+        lastX = (int) event.getX();
+        lastY = (int) event.getY();
+        manageDeleteZoneHover(lastX, lastY);
+        lastDelta = delta;
+    }
+
+
+    /**
+     * Manage the up event when the user point the finger or mouse up from the screen
+     */
+    protected void manageUpEvent() {
+        if (dragged != -1) {
+            View v = getChildAt(dragged);
+
+            if (touchUpInDeleteZoneDrop(lastX, lastY)) {
+                draggedInDeleteZone = true;
+                reorderChildren();
+
+            } else if (lastTarget != -1) {
+                reorderChildren();
+            } else {
+                Point xy = getCoorFromIndex(dragged);
+                v.layout(xy.x, xy.y, xy.x + biggestChildWidth, xy.y + biggestChildHeight);
+            }
+
+            if (v instanceof ImageView) {
+                ((ImageView) v).setAlpha(255);
+            }
+
+            lastTarget = -1;
+            dragged = -1;
+            hideDeleteView();
+            draggedInDeleteZone = false;
+        }
+        touching = false;
+        cancelAnimations();
+    }
+
+
+    /***********************************************************************************************
+     *                                       ANIMATIONS                                            *
+     **********************************************************************************************/
+
+    /**
+     * Animate the dragged child
      */
     protected void animateDragged() {
         View v = getChildAt(dragged);
-        int x = getCoorFromIndex(dragged).x + childWidthSize / 2;
-        int y = getCoorFromIndex(dragged).y + childHeightSize / 2;
-        int l = x - (3 * childWidthSize / 4);
-        int t = y - (3 * childHeightSize / 4);
-        v.layout(l, t, l + (childWidthSize * 3 / 2), t + (childHeightSize * 3 / 2));
+        int x = getCoorFromIndex(dragged).x + biggestChildWidth / 2;
+        int y = getCoorFromIndex(dragged).y + biggestChildHeight / 2;
+        int l = x - (3 * biggestChildWidth / 4);
+        int t = y - (3 * biggestChildHeight / 4);
+        v.layout(l, t, l + (biggestChildWidth * 3 / 2), t + (biggestChildHeight * 3 / 2));
 
         AnimationSet animSet = new AnimationSet(true);
-        ScaleAnimation scale = new ScaleAnimation(.667f, 1, .667f, 1, childWidthSize * 3 / 4, childHeightSize * 3 / 4);
+        ScaleAnimation scale = new ScaleAnimation(.667f, 1, .667f, 1, biggestChildWidth * 3 / 4,
+                biggestChildHeight * 3 / 4);
         scale.setDuration(animT);
         AlphaAnimation alpha = new AlphaAnimation(1, .5f);
         alpha.setDuration(animT);
@@ -547,13 +820,23 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         v.startAnimation(animSet);
     }
 
+
+    /**
+     * Animate all the children
+     */
     private void animateMoveAllItems() {
-        for (int i=0; i < getChildCount(); i++) {
+        for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             child.startAnimation(createFastRotateAnimation());
         }
     }
 
+
+    /**
+     * Animate to create the gap when the user drag the child in to a new position
+     *
+     * @param target
+     */
     protected void animateGap(int target) {
         for (int i = 0; i < getChildCount(); i++) {
             View v = getChildAt(i);
@@ -595,6 +878,13 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Create a simple translation animation
+     *
+     * @param oldOffset old position of the view
+     * @param newOffset new position of the view
+     * @return the translate animation
+     */
     private Animation createTranslateAnimation(Point oldOffset, Point newOffset) {
         TranslateAnimation translate = new TranslateAnimation(Animation.ABSOLUTE, oldOffset.x,
                 Animation.ABSOLUTE, newOffset.x,
@@ -609,6 +899,11 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Create a simple rotation animation
+     *
+     * @return the rotate animation
+     */
     private Animation createFastRotateAnimation() {
         Animation rotate = new RotateAnimation(-3.0f,
                 3.0f,
@@ -626,81 +921,36 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Cancel all the animations
+     */
     private void cancelAnimations() {
-        for (int i=0; i < getChildCount(); i++) {
+        for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             child.clearAnimation();
         }
     }
 
 
+    /***********************************************************************************************
+     *                                    MANAGE SCROLLING                                         *
+     **********************************************************************************************/
+
     /**
-     * REORDER CHILDREN
+     * Scroll to the top of the grid
      */
-    protected void reorderChildren() {
-        //FIXME: FIGURE OUT HOW TO REORDER CHILDREN WITHOUT REMOVING THEM ALL AND RECONSTRUCTING THE LIST!!!
-
-        ArrayList<View> children = new ArrayList<View>();
-        for (int i = 0; i < getChildCount(); i++) {
-            getChildAt(i).clearAnimation();
-            children.add(getChildAt(i));
-        }
-
-        removeAllViews();
-
-        if(draggedInDeleteZone) { // dragged in deleted zone
-            children.remove(dragged);
-
-
-            if (onRearrangeListener != null) {
-                onRearrangeListener.onRearrange(true, dragged);
-            }
-
-        } else {
-
-            if (onRearrangeListener != null) {
-                onRearrangeListener.onRearrange(dragged, lastTarget);
-            }
-
-            while (dragged != lastTarget) {
-                if (lastTarget == children.size()) { // dragged and dropped to the right of the last element
-                    children.add(children.remove(dragged));
-                    dragged = lastTarget;
-
-                } else if (dragged < lastTarget) { // shift to the right
-                    Collections.swap(children, dragged, dragged + 1);
-                    dragged++;
-
-                } else if (dragged > lastTarget) { // shift to the left
-                    Collections.swap(children, dragged, dragged - 1);
-                    dragged--;
-                }
-            }
-        }
-
-        for (int i = 0; i < children.size(); i++) {
-            newPositions.set(i, -1);
-            addView(children.get(i));
-        }
-
-        if(deleteZone != null) {
-            deleteZone.bringToFront();
-        }
-
-        requestLayout();
-    }
-
-
     public void scrollToTop() {
         scroll = 0;
     }
 
 
+    /**
+     * Scroll to the bottom of the grid
+     */
     public void scrollToBottom() {
         scroll = Integer.MAX_VALUE;
         clampScroll();
     }
-
 
     protected void clampScroll() {
         int stretch = 3, overreach = getHeight() / 2;
@@ -732,27 +982,47 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Get the maximum scroll needed for drawing all the children correctly
+     *
+     * @return
+     */
     protected int getMaxScroll() {
-        int rowCount = (int)Math.ceil((double)getChildCount()/colCount), max = rowCount * childHeightSize + (rowCount + 1) * padding - getHeight();
+        int rowCount = (int) Math.ceil((double) getChildCount() / columnCount);
+        int max = rowCount * biggestChildHeight + (rowCount + 1) * biggestChildHorizontalPadding
+                + getPaddingTop() + getPaddingBottom() - getHeight();
         return max;
     }
 
 
-    public int getLastIndex() {
-        return getIndexFromCoor(lastX, lastY);
+    /***********************************************************************************************
+     *                                      DELETE ZONE                                            *
+     **********************************************************************************************/
+
+    /**
+     * Sets the delete zone if you want to have one. If you drag a child view into the delete zone
+     * it will be remove from the grid
+     *
+     * @param deleteZone the delete zone
+     */
+    public void setDeleteZone(DeleteDropZoneView deleteZone) {
+        this.deleteZone = deleteZone;
     }
 
 
-    /*
-     * DELETE ZONE
+    /**
+     * Creates a hover effect if the user drags a child in to the delete zone
+     *
+     * @param x the current x coordinate of the dragged view
+     * @param y the current y coordinate of the dragged view
      */
     private void manageDeleteZoneHover(int x, int y) {
 
-        if(deleteZone == null) {
+        if (deleteZone == null) {
             return;
         }
 
-        if (touchUpInDeleteZoneDrop(x, y) ) {
+        if (touchUpInDeleteZoneDrop(x, y)) {
             deleteZone.highlight();
         } else {
             deleteZone.smother();
@@ -760,16 +1030,24 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * Checks if the user drops the dragged child into the delete zone
+     *
+     * @param x the current x coordinate of the dragged view
+     * @param y the current y coordinate of the dragged view
+     * @return if the child was dragged in the delete zone or not
+     */
     private boolean touchUpInDeleteZoneDrop(int x, int y) {
 
-        if(deleteZone == null) {
+        if (deleteZone == null) {
             return false;
         }
 
         Rect zone = new Rect();
         deleteZone.getHitRect(zone);
 
-        int offset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+        int offset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40,
+                getResources().getDisplayMetrics());
 
         if (zone.intersect(x, y, x + offset, y + offset)) {
             deleteZone.smother();
@@ -779,33 +1057,91 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
+    /**
+     * If it was set a delete view zone , makes it visible
+     */
     private void showDeleteView() {
-        if(deleteZone != null) {
+        if (deleteZone != null) {
             deleteZone.setVisibility(View.VISIBLE);
         }
     }
 
 
+    /**
+     * If it was set a delete view zone , makes it invisible
+     */
     private void hideDeleteView() {
-        if(deleteZone != null) {
+        if (deleteZone != null) {
             deleteZone.setVisibility(View.INVISIBLE);
         }
     }
 
 
-    /*
-     * LISTENERS
+    /***********************************************************************************************
+     *                                        LISTENERS                                            *
+     **********************************************************************************************/
+
+    /**
+     * Sets the default listeners
+     */
+    protected void setListeners() {
+        setOnTouchListener(this);
+        super.setOnClickListener(this);
+        setOnLongClickListener(this);
+    }
+
+
+//    @Override
+//    public void setOnClickListener(OnClickListener l) {
+//        secondaryOnClickListener = l;
+//    }
+
+    /**
+     * Sets the rearrange listener
+     *
+     * @param l the rearrange listener
      */
     public void setOnRearrangeListener(OnRearrangeListener l) {
         this.onRearrangeListener = l;
     }
 
 
+    /**
+     * Set the listener for the clicks on a item of the grid, for give a new functionality other than
+     * the default drag-drop effect
+     *
+     * @param l the onItemClick listener
+     */
     public void setOnItemClickListener(OnItemClickListener l) {
         this.onItemClickListener = l;
     }
 
+
+    /**
+     * Set the listener for the longClicks on a item of the grid, for give a new functionality other than
+     * the default drag-drop effect
+     *
+     * @param l the onItemLongClick listener
+     */
     public void setOnItemLongClickListener(OnItemLongClickListener l) {
         this.onItemLongClickListener = l;
     }
+
+
+    /***********************************************************************************************
+     *                                        UTILITIES                                            *
+     **********************************************************************************************/
+
+    /**
+     * Transform a dpi value in to its equivalent number of pixel depending on the resolution of the
+     * screen
+     *
+     * @param size in dpi
+     * @return number of pixels
+     */
+    private float getPixelFromDip(int size) {
+        Resources res = context.getResources();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, res.getDisplayMetrics());
+    }
+
 }

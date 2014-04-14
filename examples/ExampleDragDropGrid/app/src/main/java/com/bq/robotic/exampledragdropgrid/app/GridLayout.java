@@ -34,6 +34,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bq.robotic.drag_drop_grid.DeleteDropZoneView;
@@ -64,6 +65,12 @@ public class GridLayout extends ActionBarActivity {
         setContentView(R.layout.activity_grid_layout);
 
         gridView = ((DraggableGridView) findViewById(R.id.grid_view));
+
+        /*
+          Examples of other properties of the grid view
+         */
+//        gridView.setNumberOfColumns(3);
+//        gridView.setCenterChildrenInGrid(true);
 
         /**
          * You can add a delete zone or not. If you don't want the delete zone, you can still manage
@@ -159,8 +166,12 @@ public class GridLayout extends ActionBarActivity {
 
             case R.id.pollywog_button:
 //                view.setImageResource(R.drawable.bot_pollywog);
-                view.setImageBitmap(getThumb(getString(R.string.pollywog)));
-                gridView.addView(view);
+//                view.setImageBitmap(getThumb(getString(R.string.pollywog)));
+//                gridView.addView(view);
+                TextView text = (TextView) ImageView.inflate(this, R.layout.grid_text_item_layout, null);
+                text.setText(R.string.pollywog);
+                gridView.addView(text);
+
                 imagesList.add(getString(R.string.pollywog));
                 break;
 

@@ -11,7 +11,7 @@ drag-drop-grid is an Android library for creating a drag and drop grid. You can 
 
 It allows you to:
 
-* Add ImageViews or TextViews to the grid. It's scrollable so you can add as many as you want.
+* Add ImageViews or TextViews to the grid. It's scrollable so you can add as much as you want.
 
 * Rearrange the views by doing a click in an item or a long click, but you can change this default behaviour by setting a new OnItemClickListener or OnItemLongClickListener.
   
@@ -94,4 +94,4 @@ Requirements
 License
 =======
 
-drag-drop-grid is distributed in terms of LGPL license. See http://www.gnu.org/licenses/lgpl.html for more details.
+drag-drop-gridis distributed in terms of LGPL license. See http://www.gnu.org/licenses/lgpl.html for more details.

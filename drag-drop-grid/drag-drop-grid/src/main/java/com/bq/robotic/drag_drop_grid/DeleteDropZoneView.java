@@ -36,12 +36,19 @@ public class DeleteDropZoneView extends Button {
 
     private boolean straight = true;
 
+    /***********************************************************************************************
+     *                                      CONSTRUCTORS                                           *
+     **********************************************************************************************/
 
+    /**
+     * Programmatically constructor
+     */
     public DeleteDropZoneView(Context context) {
         super(context);
 
         setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_delete, 0, 0, 0);
-        setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7, getResources().getDisplayMetrics()));
+        setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7,
+                getResources().getDisplayMetrics()));
 
         setTextColor(Color.WHITE);
         setBackgroundColor(Color.BLACK);
@@ -50,11 +57,15 @@ public class DeleteDropZoneView extends Button {
     }
 
 
+    /**
+     * XML constructors
+     */
     public DeleteDropZoneView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_delete, 0, 0, 0);
-        setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7, getResources().getDisplayMetrics()));
+        setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7,
+                getResources().getDisplayMetrics()));
 
         setTextColor(Color.WHITE);
         setBackgroundColor(Color.BLACK);
@@ -63,6 +74,12 @@ public class DeleteDropZoneView extends Button {
     }
 
 
+    /**
+     * The default background is black, and when the user drag the view over the delete zone it
+     * highlight the delete zone as a hover with a red color
+     *
+     * @param canvas place to draw for the delete zone
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -70,6 +87,7 @@ public class DeleteDropZoneView extends Button {
         if (straight) {
             setBackgroundColor(Color.BLACK);
             getBackground().setAlpha(200);
+
         } else {
             setBackgroundColor(Color.RED);
             getBackground().setAlpha(200);
@@ -77,15 +95,21 @@ public class DeleteDropZoneView extends Button {
     }
 
 
+    /**
+     * Create the hover effect
+     */
     public void highlight() {
         straight = false;
         invalidate();
     }
 
+
+    /**
+     * Disable the over effect
+     */
     public void smother() {
         straight = true;
         invalidate();
     }
-
 
 }
