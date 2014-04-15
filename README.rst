@@ -23,6 +23,8 @@ It allows you to:
 
 * You can center the items in the grid.
 
+* You can set a fixed width, height and padding for all the views in the grid.
+
 There is a example project, ExampleDragDropGrid, where you can see how can the library be used.
 
 

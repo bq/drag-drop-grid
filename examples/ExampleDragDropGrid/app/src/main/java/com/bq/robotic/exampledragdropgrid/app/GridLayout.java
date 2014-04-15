@@ -71,6 +71,9 @@ public class GridLayout extends ActionBarActivity {
          */
 //        gridView.setNumberOfColumns(3);
 //        gridView.setCenterChildrenInGrid(true);
+        gridView.setFixedChildrenWidth(65);
+        gridView.setFixedChildrenHeight(65);
+        gridView.setFixedChildrenHorizontalPadding(7);
 
         /**
          * You can add a delete zone or not. If you don't want the delete zone, you can still manage
@@ -134,7 +137,7 @@ public class GridLayout extends ActionBarActivity {
 
 
         /**
-         * OTHER EXAMPLE: DISCOMMENT THIS TO ALLOW DO ANOTHER THING IN ON LONG CLICK SUCH AS SHOW
+         * OTHER EXAMPLE: UNCOMMENT THIS TO ALLOW DO ANOTHER THING IN ON LONG CLICK SUCH AS SHOW
          * THE TOAST
          */
 //        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
