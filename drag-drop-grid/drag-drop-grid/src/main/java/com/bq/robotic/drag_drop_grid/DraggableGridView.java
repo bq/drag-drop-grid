@@ -59,7 +59,6 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     protected Handler handler = new Handler();
     protected Float fixedChildrenWidth = null;
     protected Float fixedChildrenHeight = null;
-    protected Float fixedChildrenHorizontalPadding = null;
 
     protected boolean centerChildrenInGrid = false;
 
@@ -86,7 +85,6 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 
     // Manage child sizes and padding
     protected int biggestChildWidth, biggestChildHeight;
-    protected int biggestChildHorizontalPadding, gridPaddingWidth;
     protected float screenWidth;
 
     // Debugging
@@ -108,11 +106,6 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         handler.removeCallbacks(updateTask);
         handler.postAtTime(updateTask, SystemClock.uptimeMillis() + 500);
         setChildrenDrawingOrderEnabled(true);
-
-        gridPaddingWidth = ((getPaddingLeft() > getPaddingRight()) ? getPaddingLeft() : getPaddingRight());
-
-//        Log.d(LOG_TAG, "Padding grid: " + getPaddingLeft());
-
     }
 
 
@@ -124,8 +117,6 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         handler.removeCallbacks(updateTask);
         handler.postAtTime(updateTask, SystemClock.uptimeMillis() + 500);
         setChildrenDrawingOrderEnabled(true);
-
-        biggestChildHorizontalPadding = getPaddingLeft();
 
     }
 
@@ -151,9 +142,9 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         public void run() {
 
             if (dragged != -1) {
-                if (lastY < biggestChildHorizontalPadding * 3 && scroll > 0) {
+                if (lastY < getPaddingTop() * 3 && scroll > 0) {
                     scroll -= 20;
-                } else if (lastY > getBottom() - getTop() - (biggestChildHorizontalPadding * 3)
+                } else if (lastY > getBottom() - getTop() - (getPaddingBottom() * 3)
                         && scroll < getMaxScroll()) {
                     scroll += 20;
                 }
@@ -254,24 +245,6 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
     }
 
 
-    /**
-     * All children have this horizontal padding
-     * @return children's horizontal padding
-     */
-    public float getFixedChildrenHorizontalPadding() {
-        return fixedChildrenHorizontalPadding;
-    }
-
-
-    /**
-     * Give a fixed horizontal padding to all the children
-     * @param fixedChildrenHorizontalPadding children's horizontal padding
-     */
-    public void setFixedChildrenHorizontalPadding(float fixedChildrenHorizontalPadding) {
-        this.fixedChildrenHorizontalPadding = fixedChildrenHorizontalPadding;
-    }
-
-
 
     /***********************************************************************************************
      *                                       MANAGE CHILDREN                                       *
@@ -335,7 +308,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 
         if (deleteZone != null) {
             measureChild(deleteZone, MeasureSpec.makeMeasureSpec(display.getWidth(), MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec((int) getPixelFromDip(40), MeasureSpec.EXACTLY));
+                    MeasureSpec.makeMeasureSpec(getPixelFromDip(40), MeasureSpec.EXACTLY));
         }
 
         setMeasuredDimension(widthSize, heightSize);
@@ -359,28 +332,21 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 
         // Check if a fixed width was set for all children
         if(fixedChildrenWidth != null) {
-            biggestChildWidth = Math.round(getPixelFromDip(fixedChildrenWidth));
+            biggestChildWidth = getPixelFromDip(fixedChildrenWidth);
         } else {
             searchBiggestChildWidth();
         }
 
         // Check if a fixed height was set for all children
         if(fixedChildrenHeight != null) {
-            biggestChildHeight = Math.round(getPixelFromDip(fixedChildrenHeight));
+            biggestChildHeight = getPixelFromDip(fixedChildrenHeight);
         } else {
             searchBiggestChildHeight();
         }
 
-        // Check if a fixed horizontalPadding was set for all children
-        if(fixedChildrenHorizontalPadding != null) {
-            biggestChildHorizontalPadding = Math.round(getPixelFromDip(fixedChildrenHorizontalPadding));
-        } else {
-            searchBiggestChildHorizontalPadding();
-        }
-
         columnCount = 0;
 
-        screenWidthAux -= biggestChildHorizontalPadding - gridPaddingWidth;
+        screenWidthAux -= getPaddingRight() + getPaddingLeft();
 
         // Get the number of columns
         for (int i = 0; i < getChildCount(); i++) {
@@ -389,7 +355,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
             }
 
             columnCount++;
-            screenWidthAux -= biggestChildWidth + biggestChildHorizontalPadding;
+            screenWidthAux -= biggestChildWidth;
         }
 
         // If it was set a fixed number of columns programmatically and it isn't bigger than the
@@ -415,8 +381,6 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
      */
     protected void searchBiggestChildWidth() {
         biggestChildWidth = 0;
-        biggestChildHeight = 0;
-        biggestChildHorizontalPadding = 0;
 
         for (int index = 0; index < getChildCount(); index++) {
             View child = getChildAt(index);
@@ -440,27 +404,6 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
 
             if (biggestChildHeight < child.getMeasuredHeight()) {
                 biggestChildHeight = child.getMeasuredHeight();
-            }
-        }
-    }
-
-
-    /**
-     * Searches for the child with the biggest horizontal padding in order to set this size for all
-     * the children, for getting the same number of children in each row
-     */
-    protected void searchBiggestChildHorizontalPadding() {
-        biggestChildHorizontalPadding = 0;
-
-        for (int index = 0; index < getChildCount(); index++) {
-            View child = getChildAt(index);
-
-            if (biggestChildHorizontalPadding < child.getPaddingLeft()) {
-                biggestChildHorizontalPadding = child.getPaddingLeft();
-            }
-
-            if (biggestChildHorizontalPadding < child.getPaddingRight()) {
-                biggestChildHorizontalPadding = child.getPaddingRight();
             }
         }
     }
@@ -588,13 +531,16 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
      * @return number of the column
      */
     protected int getColFromCoor(int coor) {
-        coor -= biggestChildHorizontalPadding + gridPaddingWidth;
+
+        coor -= getPaddingLeft();
 
         int widthForHorizontalCentering = 0;
-        float emptySpaceInGrid = screenWidth - gridPaddingWidth * 2 - biggestChildHorizontalPadding
-                - ((biggestChildWidth + biggestChildHorizontalPadding) * columnCount);
 
-        if (centerChildrenInGrid || emptySpaceInGrid < biggestChildWidth + biggestChildHorizontalPadding) {
+        // For centering the children if there isn't room for more children
+        float emptySpaceInGrid = screenWidth - getPaddingLeft() - getPaddingRight()
+                - (biggestChildWidth * columnCount);
+
+        if (centerChildrenInGrid || emptySpaceInGrid < biggestChildWidth) {
             widthForHorizontalCentering = Math.round(emptySpaceInGrid / 2);
         }
 
@@ -605,7 +551,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
                 return i;
             }
 
-            coor -= (biggestChildWidth + biggestChildHorizontalPadding);
+            coor -= biggestChildWidth;
         }
         return -1;
     }
@@ -618,14 +564,14 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
      * @return number of the row
      */
     protected int getRowFromCoor(int coor) {
-        coor -= biggestChildHorizontalPadding + getPaddingTop();
+        coor -= getPaddingTop();
 
         for (int i = 0; coor > 0; i++) {
             if (coor < biggestChildHeight) {
                 return i;
             }
 
-            coor -= (biggestChildHeight + biggestChildHorizontalPadding);
+            coor -= biggestChildHeight;
         }
         return -1;
     }
@@ -676,20 +622,17 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         int widthForHorizontalCentering = 0;
 
         // For centering the children if there isn't room for more children
-        float emptySpaceInGrid = screenWidth - gridPaddingWidth * 2 - biggestChildHorizontalPadding
-                - ((biggestChildWidth + biggestChildHorizontalPadding) * columnCount);
+        float emptySpaceInGrid = screenWidth - getPaddingLeft() - getPaddingRight()
+                - (biggestChildWidth * columnCount);
 
-        if (centerChildrenInGrid || emptySpaceInGrid < biggestChildWidth + biggestChildHorizontalPadding) {
+        if (centerChildrenInGrid || emptySpaceInGrid < biggestChildWidth) {
             widthForHorizontalCentering = Math.round(emptySpaceInGrid / 2);
         }
 
         // Take care about the padding of each child and the padding of the grid view itself
         // You return the coordinates of the top left point of the child view
-        return new Point(widthForHorizontalCentering + gridPaddingWidth + biggestChildHorizontalPadding
-                + (biggestChildWidth + biggestChildHorizontalPadding) * col,
-                getPaddingTop() + biggestChildHorizontalPadding + (biggestChildHeight
-                        + biggestChildHorizontalPadding) * row - scroll
-        );
+        return new Point(widthForHorizontalCentering + getPaddingLeft() + biggestChildWidth * col,
+                getPaddingTop() + biggestChildHeight * row - scroll);
     }
 
 
@@ -1092,9 +1035,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
      */
     protected int getMaxScroll() {
         int rowCount = (int) Math.ceil((double) getChildCount() / columnCount);
-        int max = rowCount * biggestChildHeight + (rowCount + 1) * biggestChildHorizontalPadding
-                + getPaddingTop() + getPaddingBottom() - getHeight();
-        return max;
+        return rowCount * biggestChildHeight + getPaddingTop() + getPaddingBottom() - getHeight();
     }
 
 
@@ -1239,17 +1180,17 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
      * Transform a dpi value in to its equivalent number of pixel depending on the resolution of the
      * screen
      *
-     * @param size in dpi
+     * @param dp in dpi
      * @return number of pixels
      */
-    private float getPixelFromDip(int size) {
+    private int getPixelFromDip(int dp) {
         Resources res = context.getResources();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, res.getDisplayMetrics());
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
     }
 
-    private float getPixelFromDip(float size) {
+    private int getPixelFromDip(float dp) {
         Resources res = context.getResources();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, size, res.getDisplayMetrics());
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
     }
 
 }

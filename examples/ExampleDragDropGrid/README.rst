@@ -16,7 +16,7 @@ It allows you to:
 
 * The views generated when clicked in the buttons are of differents sizes in order to show te resize functionality. If there is no more space for another view, the items are centered in the grid layout.
 
-* There is another example commented in the code for setting a fixed number of columns (no more than the available for the limited width of the device). Other examples are: center the items in the grid and set a fixed width, height and padding for all the views in the grid.
+* There is another example commented in the code for setting a fixed number of columns (no more than the available for the limited width of the device). Other examples are: center the items in the grid and set a fixed width and height for all the views in the grid.
 
 
 Installation

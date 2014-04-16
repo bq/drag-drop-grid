@@ -71,9 +71,8 @@ public class GridLayout extends ActionBarActivity {
          */
 //        gridView.setNumberOfColumns(3);
 //        gridView.setCenterChildrenInGrid(true);
-        gridView.setFixedChildrenWidth(65);
-        gridView.setFixedChildrenHeight(65);
-        gridView.setFixedChildrenHorizontalPadding(7);
+//        gridView.setFixedChildrenWidth(65);
+//        gridView.setFixedChildrenHeight(65);
 
         /**
          * You can add a delete zone or not. If you don't want the delete zone, you can still manage

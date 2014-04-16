@@ -23,7 +23,7 @@ It allows you to:
 
 * You can center the items in the grid.
 
-* You can set a fixed width, height and padding for all the views in the grid.
+* You can set a fixed width and height for all the views in the grid.
 
 There is a example project, ExampleDragDropGrid, where you can see how can the library be used.
 
@@ -49,7 +49,7 @@ Usage
 #. Add the drag-drop-grid dependency to your app's build.gradle file::
 
     dependencies {
-      compile('com.bq.robotic:drag-drop-grid:1.3@jar')
+      compile('com.bq.robotic:drag-drop-grid:1.4@jar')
     }
 
 
