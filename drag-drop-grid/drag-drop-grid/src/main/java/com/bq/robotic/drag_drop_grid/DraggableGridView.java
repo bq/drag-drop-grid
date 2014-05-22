@@ -307,8 +307,10 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         Display display = wm.getDefaultDisplay();
 
         if (deleteZone != null) {
-            measureChild(deleteZone, MeasureSpec.makeMeasureSpec(display.getWidth(), MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(getPixelFromDip(40), MeasureSpec.EXACTLY));
+//            measureChild(deleteZone, MeasureSpec.makeMeasureSpec(display.getWidth(), MeasureSpec.EXACTLY),
+//                    MeasureSpec.makeMeasureSpec(getPixelFromDip(40), MeasureSpec.EXACTLY));
+
+            measureChild(deleteZone, widthMeasureSpec, heightMeasureSpec);
         }
 
         setMeasuredDimension(widthSize, heightSize);
@@ -1083,20 +1085,25 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
      */
     private boolean touchUpInDeleteZoneDrop(int x, int y) {
 
-        if (deleteZone == null) {
+        if (deleteZone == null || dragged == -1) {
             return false;
         }
 
         Rect zone = new Rect();
-        deleteZone.getHitRect(zone);
+        deleteZone.getGlobalVisibleRect(zone);
 
-        int offset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40,
-                getResources().getDisplayMetrics());
+        View draggedChild = getChildAt(dragged);
+        Rect draggedZone = new Rect();
+        draggedChild.getGlobalVisibleRect(draggedZone);
 
-        if (zone.intersect(x, y, x + offset, y + offset)) {
-            deleteZone.smother();
+        int offset = getPixelFromDip(40);
+
+        if(draggedZone.centerX() > zone.left - offset && draggedZone.centerX()  < zone.right + offset &&
+                draggedZone.centerY() > zone.top - offset && draggedZone.centerY()  < zone.bottom + offset) {
+                deleteZone.smother();
             return true;
         }
+
         return false;
     }
 

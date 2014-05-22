@@ -92,8 +92,7 @@
         android:layout_height="50dp"
         android:paddingLeft="50dp"
         android:paddingRight="55dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:layout_marginBottom="10dp"
         android:visibility="invisible"
         android:text="@string/remove" />

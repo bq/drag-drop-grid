@@ -49,7 +49,7 @@ Usage
 #. Add the drag-drop-grid dependency to your app's build.gradle file::
 
     dependencies {
-      compile('com.bq.robotic:drag-drop-grid:1.4@jar')
+      compile('com.bq.robotic:drag-drop-grid:1.5@jar')
     }
 
 
