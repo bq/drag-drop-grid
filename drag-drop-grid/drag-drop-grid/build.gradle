@@ -1,18 +1,18 @@
 apply plugin: 'android-library'
 apply plugin: 'maven'
 
-version = '1.5'
+version = '1.6'
 group = 'com.bq.robotic'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion "19.1.0"
 
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
-        versionCode 5
-        versionName "1.5"
+        versionCode 6
+        versionName "1.6"
     }
     buildTypes {
         release {

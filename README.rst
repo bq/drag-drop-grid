@@ -25,7 +25,7 @@ It allows you to:
 
 * You can set a fixed width and height for all the views in the grid.
 
-There is a example project, ExampleDragDropGrid, where you can see how can the library be used.
+There is an example project, ExampleDragDropGrid, where you can see how can the library be used.
 
 
 Usage
@@ -75,7 +75,7 @@ Installation
 
 #. In Android Studio go to ``File`` > ``Open`` and select the drag-drop-grid gradle project inside the previous cloned project (that with the green robot icon, the drag-drop-grid library folder not the repository one with the example project inside too).
 
-#. If your are going to use drag-drop-grid for one of your projects, follow the instructions of the `Usage section <https://github.com/bq/drag-drop-grid#usage>`_ in order to installing it in your local repository and add it the dependency needed.
+#. If your are going to use drag-drop-grid for one of your projects, follow the instructions of the `Usage section <https://github.com/bq/drag-drop-grid#usage>`_ in order to installing it in your local repository and add to it the dependency needed.
 
 
 Requirements

@@ -17,6 +17,8 @@ It allows you to:
 * The views generated when clicked in the buttons are of differents sizes in order to show te resize functionality. If there is no more space for another view, the items are centered in the grid layout.
 
 * There is another example commented in the code for setting a fixed number of columns (no more than the available for the limited width of the device). Other examples are: center the items in the grid and set a fixed width and height for all the views in the grid.
+  
+If you have any questions you can contact us through the `DIY forum <http://diy.bq.com/forums/forum/forum/>`_  or sending an email to diy@bq.com.
 
 
 Installation
@@ -49,12 +51,16 @@ Requirements
 
 - `Android Studio <https://developer.android.com/sdk/installing/studio.html>`_ 
 
-- `Maven <http://maven.apache.org/download.cgi>`_. If you use Ubuntu::
+- `Maven <http://maven.apache.org/download.cgi>`_.  If you use Ubuntu::
     
     sudo apt-get update
     sudo apt-get install maven
 
 - `Gradle <http://www.gradle.org/downloads>`_ recommended version 1.10
+  
+- `Arduino IDE <http://arduino.cc/en/Main/Software#.UzBT5HX5Pj4>`_ 
+
+- Arduino board with Bluetooth
 
 
 License
