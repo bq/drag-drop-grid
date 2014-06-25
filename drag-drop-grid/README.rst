@@ -37,12 +37,12 @@ Usage
 
 #. Install in your local repository:
   
-    * Gradle version equal or lower than 1.10::
+    * Gradle version equal or lower than 1.10 and drag-drop-grid version equal or lower than 1.6::
   
         cd drag-drop-grid/drag-drop-grid
         gradle publishToMavenLocal
 
-    * Gradle version greater than 1.10::
+    * Gradle version greater than 1.10 and drag-drop-grid version greater than 1.6::
         
         cd drag-drop-grid/drag-drop-grid
         gradle install
@@ -55,13 +55,13 @@ Usage
 
 #. Add the drag-drop-grid dependency to your app's build.gradle file:
 
-    * Gradle version equal or lower than 1.10::
+    * Gradle version equal or lower than 1.10 and drag-drop-grid version equal or lower than 1.6::
   
         dependencies {
             compile('com.bq.robotic:drag-drop-grid:+@jar')
         }
 
-    * Gradle version greater than 1.10::
+    * Gradle version greater than 1.10 and drag-drop-grid version greater than 1.6::
         
         dependencies {
             compile('com.bq.robotic:drag-drop-grid:+@aar')
@@ -87,12 +87,12 @@ Installation
 
 #. Install the drag-drop-grid library in your local repository:
   
-    * Gradle version equal or lower than 1.10::
-
+    * Gradle version equal or lower than 1.10 and drag-drop-grid version equal or lower than 1.6::
+  
         cd drag-drop-grid/drag-drop-grid
         gradle publishToMavenLocal
 
-    * Gradle version greater than 1.10::
+    * Gradle version greater than 1.10 and drag-drop-grid version greater than 1.6::
         
         cd drag-drop-grid/drag-drop-grid
         gradle install
