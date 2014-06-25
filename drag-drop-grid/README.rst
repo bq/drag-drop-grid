@@ -25,7 +25,7 @@ It allows you to:
 
 * You can set a fixed width and height for all the views in the grid.
 
-There is a example project, ExampleDragDropGrid, where you can see how can the library be used.
+There is an example project, ExampleDragDropGrid, where you can see how can the library be used.
 
 
 Usage
@@ -35,10 +35,17 @@ Usage
 
     git clone https://github.com/bq/drag-drop-grid.git
 
-#. Install in your local repository::
+#. Install in your local repository:
   
-    cd drag-drop-grid/drag-drop-grid
-    gradle publishToMavenLocal
+    * Gradle version equal or lower than 1.10::
+  
+        cd drag-drop-grid/drag-drop-grid
+        gradle publishToMavenLocal
+
+    * Gradle version greater than 1.10::
+        
+        cd drag-drop-grid/drag-drop-grid
+        gradle install
 
 #. Add your local repository to your root project's build.gradle file::
 
@@ -46,11 +53,21 @@ Usage
         mavenLocal()
     }
 
-#. Add the drag-drop-grid dependency to your app's build.gradle file::
+#. Add the drag-drop-grid dependency to your app's build.gradle file:
 
-    dependencies {
-      compile('com.bq.robotic:drag-drop-grid:1.5@jar')
-    }
+    * Gradle version equal or lower than 1.10::
+  
+        dependencies {
+            compile('com.bq.robotic:drag-drop-grid:+@jar')
+        }
+
+    * Gradle version greater than 1.10::
+        
+        dependencies {
+            compile('com.bq.robotic:drag-drop-grid:+@aar')
+        }
+
+
 
 
 Installation
@@ -68,14 +85,21 @@ Installation
 
     git clone https://github.com/bq/drag-drop-grid.git
 
-#. Install the drag-drop-grid library in your local repository::
+#. Install the drag-drop-grid library in your local repository:
   
-    cd drag-drop-grid/drag-drop-grid
-    gradle publishToMavenLocal
+    * Gradle version equal or lower than 1.10::
+
+        cd drag-drop-grid/drag-drop-grid
+        gradle publishToMavenLocal
+
+    * Gradle version greater than 1.10::
+        
+        cd drag-drop-grid/drag-drop-grid
+        gradle install
 
 #. In Android Studio go to ``File`` > ``Open`` and select the drag-drop-grid gradle project inside the previous cloned project (that with the green robot icon, the drag-drop-grid library folder not the repository one with the example project inside too).
 
-#. If your are going to use drag-drop-grid for one of your projects, follow the instructions of the `Usage section <https://github.com/bq/drag-drop-grid#usage>`_ in order to installing it in your local repository and add it the dependency needed.
+#. If your are going to use drag-drop-grid for one of your projects, follow the instructions of the `Usage section <https://github.com/bq/drag-drop-grid#usage>`_ in order to installing it in your local repository and add to it the dependency needed.
 
 
 Requirements

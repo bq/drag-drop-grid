@@ -36,10 +36,17 @@ Installation
 
     git clone https://github.com/bq/drag-drop-grid.git
 
-#. Install the drag-drop-grid library in your local repository::
+#. Install the drag-drop-grid library in your local repository:
+	
+    * Gradle version equal or lower than 1.10::
   
-    cd drag-drop-grid/drag-drop-grid
-    gradle publishToMavenLocal
+        cd drag-drop-grid/drag-drop-grid
+        gradle publishToMavenLocal
+
+    * Gradle version greater than 1.10::
+        
+        cd drag-drop-grid/drag-drop-grid
+        gradle install
 
 #. In Android Studio go to ``File`` > ``Open`` and select the ``ExampleDragDropGrid`` from the ``Example`` folder of the cloned repository.
 

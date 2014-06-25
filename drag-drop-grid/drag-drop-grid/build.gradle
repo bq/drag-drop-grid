@@ -1,7 +1,9 @@
 apply plugin: 'android-library'
-apply plugin: 'maven'
+// Only if the project is an aar, with jar is not needed
+apply plugin: 'android-maven'
+//apply plugin: 'maven'
 
-version = '1.6'
+version = '1.7'
 group = 'com.bq.robotic'
 
 android {
@@ -11,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
-        versionCode 6
-        versionName "1.6"
+        versionCode 7
+        versionName "1.7"
     }
     buildTypes {
         release {
@@ -22,20 +24,20 @@ android {
     }
 }
 
-// build JAR file
-task androidReleaseJar(type: Jar, dependsOn: assembleRelease) {
-    from "$buildDir/classes/release/"
-}
-
-apply plugin: 'maven-publish'
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifact androidReleaseJar
-        }
-    }
-}
+//// build JAR file
+//task androidReleaseJar(type: Jar, dependsOn: assembleRelease) {
+//    from "$buildDir/classes/release/"
+//}
+//
+//apply plugin: 'maven-publish'
+//
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            artifact androidReleaseJar
+//        }
+//    }
+//}
 
 // You have to use 'gradle publishToMavenLocal' in order to install the .jar in the local maven repository
 

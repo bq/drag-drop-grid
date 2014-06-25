@@ -24,5 +24,6 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:19.1.0'
-    compile('com.bq.robotic:drag-drop-grid:+@jar')
+    compile('com.bq.robotic:drag-drop-grid:+@aar')
+//    compile('com.bq.robotic:drag-drop-grid:+@jar')
 }
