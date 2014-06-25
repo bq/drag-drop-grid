@@ -1107,7 +1107,6 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         return false;
     }
 
-
     /**
      * If it was set a delete view zone , makes it visible
      */
