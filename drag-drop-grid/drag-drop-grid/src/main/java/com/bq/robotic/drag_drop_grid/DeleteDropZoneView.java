@@ -28,13 +28,25 @@ package com.bq.robotic.drag_drop_grid;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.widget.Button;
+import android.util.Log;
+import android.widget.ImageButton;
 
-public class DeleteDropZoneView extends Button {
+
+public class DeleteDropZoneView extends ImageButton {
+
+    public static final String TAG = "DeleteDropZoneView";
 
     private boolean straight = true;
+    private Drawable definedBackgroundDrawable;
+    private Drawable definedHighlightBackgroundDrawable;
+    private Integer definedHighlightBackgroundColor;
+    private static final int DEFAULT_BACKGROUND_COLOR = Color.BLACK;
+    private static final int DEFAULT_BACKGROUND_HIGHLIGHT_COLOR = Color.RED;
+
+    private boolean modifiedBackgroundInsideThisClass = false;
+
 
     /***********************************************************************************************
      *                                      CONSTRUCTORS                                           *
@@ -46,12 +58,8 @@ public class DeleteDropZoneView extends Button {
     public DeleteDropZoneView(Context context) {
         super(context);
 
-        setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_delete, 0, 0, 0);
-        setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7,
-                getResources().getDisplayMetrics()));
-
-        setTextColor(Color.WHITE);
-        setBackgroundColor(Color.BLACK);
+        setImageResource(android.R.drawable.ic_menu_delete);
+        definedBackgroundDrawable = getBackground();
         getBackground().setAlpha(200);
 
     }
@@ -63,16 +71,83 @@ public class DeleteDropZoneView extends Button {
     public DeleteDropZoneView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_delete, 0, 0, 0);
-        setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7,
-                getResources().getDisplayMetrics()));
-
-        setTextColor(Color.WHITE);
-        setBackgroundColor(Color.BLACK);
+        setImageResource(android.R.drawable.ic_menu_delete);
+        definedBackgroundDrawable = getBackground();
         getBackground().setAlpha(200);
 
     }
 
+
+    /**
+     * Change the default delete drawable
+     * @param deleteDrawable the delete drawable
+     */
+    public void setDeleteDrawable(Drawable deleteDrawable) {
+        setImageDrawable(deleteDrawable);
+    }
+
+
+    /**
+     * Change the default delete drawable
+     * @param deleteDrawableId the delete drawable resource
+     */
+    public void setDeleteDrawable(int deleteDrawableId) {
+        setImageResource(deleteDrawableId);
+    }
+
+
+    /**
+     * Change the default delete highlight drawable
+     * @param deleteHighlightDrawable the delete highlight drawable
+     */
+    public void setHighlightDeleteDrawable(Drawable deleteHighlightDrawable) {
+        definedHighlightBackgroundDrawable = deleteHighlightDrawable;
+    }
+
+
+    /**
+     * Change the default delete highlight drawable
+     * @param deleteHighlightDrawableId the delete highlight drawable resource
+     */
+    public void setHighlightDeleteDrawable(int deleteHighlightDrawableId) {
+        definedHighlightBackgroundDrawable = getContext().getResources().getDrawable(deleteHighlightDrawableId);
+    }
+
+
+    /**
+     * Change the default delete highlight color
+     * @param deleteHighlightColor the delete highlight color
+     */
+    public void setHighlightDeleteColor(int deleteHighlightColor) {
+        definedHighlightBackgroundColor = deleteHighlightColor;
+    }
+
+    @Override
+    public void setBackgroundColor(int color) {
+        super.setBackgroundColor(color);
+
+        if(!modifiedBackgroundInsideThisClass) {
+            definedBackgroundDrawable = getBackground();
+        }
+    }
+
+    @Override
+    public void setBackgroundDrawable(Drawable background) {
+        super.setBackgroundDrawable(background);
+
+        if(!modifiedBackgroundInsideThisClass) {
+            definedBackgroundDrawable = getBackground();
+        }
+    }
+
+    @Override
+    public void setBackgroundResource(int resid) {
+        super.setBackgroundResource(resid);
+
+        if(!modifiedBackgroundInsideThisClass) {
+            definedBackgroundDrawable = getBackground();
+        }
+    }
 
     /**
      * The default background is black, and when the user drag the view over the delete zone it
@@ -85,12 +160,42 @@ public class DeleteDropZoneView extends Button {
         super.onDraw(canvas);
 
         if (straight) {
-            setBackgroundColor(Color.BLACK);
-            getBackground().setAlpha(200);
+            if(definedBackgroundDrawable != null) {
+                modifiedBackgroundInsideThisClass = true;
+                setBackgroundDrawable(definedBackgroundDrawable);
+                modifiedBackgroundInsideThisClass = false;
+                getBackground().setAlpha(255);
+
+            }  else {
+                modifiedBackgroundInsideThisClass = true;
+                setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+                modifiedBackgroundInsideThisClass = false;
+                getBackground().setAlpha(200);
+            }
+
+//            getBackground().setAlpha(200);
 
         } else {
-            setBackgroundColor(Color.RED);
-            getBackground().setAlpha(200);
+            if(definedHighlightBackgroundDrawable != null) {
+                modifiedBackgroundInsideThisClass = true;
+                setBackgroundDrawable(definedHighlightBackgroundDrawable);
+                modifiedBackgroundInsideThisClass = false;
+                getBackground().setAlpha(255);
+
+            } else if(definedHighlightBackgroundColor != null) {
+                modifiedBackgroundInsideThisClass = true;
+                setBackgroundColor(definedHighlightBackgroundColor);
+                modifiedBackgroundInsideThisClass = false;
+                getBackground().setAlpha(255);
+
+            } else {
+                modifiedBackgroundInsideThisClass = true;
+                setBackgroundColor(DEFAULT_BACKGROUND_HIGHLIGHT_COLOR);
+                modifiedBackgroundInsideThisClass = false;
+                getBackground().setAlpha(200);
+            }
+
+//            getBackground().setAlpha(200);
         }
     }
 

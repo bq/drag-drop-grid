@@ -25,6 +25,8 @@ It allows you to:
 
 * You can set a fixed width and height for all the views in the grid.
 
+* Now you can customize your delete zone with other image, background and highlight color or background
+
 There is an example project, ExampleDragDropGrid, where you can see how can the library be used.
 
 
