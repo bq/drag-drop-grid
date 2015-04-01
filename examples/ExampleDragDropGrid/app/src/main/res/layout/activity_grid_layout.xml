@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    tools:context="com.bq.robotic.exampledragdropgrid.app.GridLayout" >
+    tools:context="com.bq.robotic.exampledragdropgrid.app.GridLayout">
 
     <ImageButton
         android:id="@+id/remove_all_button"
@@ -78,6 +78,18 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <!--<com.bq.robotic.drag_drop_grid.DeleteDropZoneView-->
+        <!--android:id="@+id/delete_view"-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:paddingLeft="50dp"-->
+        <!--android:paddingRight="55dp"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:visibility="visible"-->
+        <!--android:text="@string/remove"-->
+        <!--android:background="#A9000000"-->
+        <!--android:layout_below="@id/controls_layout_view"/>-->
+
     <com.bq.robotic.drag_drop_grid.DraggableGridView
         android:id="@+id/grid_view"
         android:layout_width="wrap_content"
@@ -92,8 +104,10 @@
         android:layout_height="50dp"
         android:paddingLeft="50dp"
         android:paddingRight="55dp"
-        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
         android:visibility="invisible"
         android:text="@string/remove" />
 

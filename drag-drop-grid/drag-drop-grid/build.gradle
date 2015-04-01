@@ -1,9 +1,9 @@
 apply plugin: 'com.android.library'
 // Only if the project is an aar, with jar is not needed
-apply plugin: 'android-maven'
+apply plugin: 'com.github.dcendents.android-maven'
 //apply plugin: 'maven'
 
-version = '1.8'
+version = '1.9'
 group = 'com.bq.robotic'
 
 android {
@@ -13,12 +13,12 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 20
-        versionCode 8
-        versionName "1.8"
+        versionCode 9
+        versionName "1.9"
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }

@@ -5,9 +5,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
+        classpath 'com.android.tools.build:gradle:1.0.0'
         // Only if the project is an aar, with jar is not needed
-        classpath 'com.github.dcendents:android-maven-plugin:1.0'
+        classpath 'com.github.dcendents:android-maven-plugin:1.2'
     }
 }
 
