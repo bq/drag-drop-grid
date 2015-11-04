@@ -7,8 +7,8 @@ version = '1.9'
 group = 'com.bq.robotic'
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion "20"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         minSdkVersion 8
