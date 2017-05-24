@@ -1,20 +1,20 @@
 apply plugin: 'com.android.library'
 // Only if the project is an aar, with jar is not needed
 apply plugin: 'com.github.dcendents.android-maven'
-//apply plugin: 'maven'
 
-version = '1.9'
+// Used for maven local, in order to install the library in to the .m2 folder
+version = '1.10'
 group = 'com.bq.robotic'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 20
-        versionCode 9
-        versionName "1.9"
+        minSdkVersion 9
+        targetSdkVersion 25
+        versionCode 10
+        versionName "1.10"
     }
     buildTypes {
         release {
@@ -24,20 +24,5 @@ android {
     }
 }
 
-//// build JAR file
-//task androidReleaseJar(type: Jar, dependsOn: assembleRelease) {
-//    from "$buildDir/classes/release/"
-//}
-//
-//apply plugin: 'maven-publish'
-//
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            artifact androidReleaseJar
-//        }
-//    }
-//}
-
-// You have to use 'gradle publishToMavenLocal' in order to install the .jar in the local maven repository
+// Use 'gradle install' in order to install the .aar in the local maven repository
 

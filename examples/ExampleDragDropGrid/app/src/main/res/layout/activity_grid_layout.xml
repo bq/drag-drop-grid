@@ -11,16 +11,18 @@
         android:layout_height="@dimen/scheduler_control_height"
         android:src="@android:drawable/ic_menu_delete"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:scaleType="centerCrop"
-        android:tint="@color/blue_dark"
+        android:padding="5dp"
+        android:background="@color/blue_dark"
         android:onClick="onButtonClick" />
 
     <HorizontalScrollView
         android:id="@+id/controls_layout_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/scheduler_control_height"
-        android:layout_marginRight="3dp"
         android:layout_toLeftOf="@id/remove_all_button"
+        android:layout_toStartOf="@id/remove_all_button"
         android:background="@color/blue_dark">
 
         <LinearLayout

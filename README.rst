@@ -60,13 +60,13 @@ Usage
     * Gradle version equal or lower than 1.10 and drag-drop-grid version equal or lower than 1.6::
   
         dependencies {
-            compile('com.bq.robotic:drag-drop-grid:+@jar')
+            compile('com.bq.robotic:drag-drop-grid:1.6@jar')
         }
 
     * Gradle version greater than 1.10 and drag-drop-grid version greater than 1.6::
         
         dependencies {
-            compile('com.bq.robotic:drag-drop-grid:+@aar')
+            compile('com.bq.robotic:drag-drop-grid:1.10@aar')
         }
 
 
@@ -116,7 +116,7 @@ Requirements
     sudo apt-get update
     sudo apt-get install maven
 
-- `Gradle <http://www.gradle.org/downloads>`_ recommended version 2.2.1
+- `Gradle <http://www.gradle.org/downloads>`_ version 3.3
 
 
 License
