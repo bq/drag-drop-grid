@@ -3,18 +3,18 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
 // Used for maven local, in order to install the library in to the .m2 folder
-version = '1.10'
+version = '1.20'
 group = 'com.bq.robotic'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 25
-        versionCode 10
-        versionName "1.10"
+        targetSdkVersion 26
+        versionCode 11
+        versionName "1.20"
     }
     buildTypes {
         release {
