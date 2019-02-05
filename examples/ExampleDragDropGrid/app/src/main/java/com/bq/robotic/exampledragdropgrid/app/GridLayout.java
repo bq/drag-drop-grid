@@ -29,7 +29,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,7 +54,7 @@ import java.util.Random;
  * simply don't add it to your layout if you don't want to use it.
  */
 
-public class GridLayout extends ActionBarActivity {
+public class GridLayout extends AppCompatActivity {
 
     private DraggableGridView gridView;
     private ArrayList<String> imagesList = new ArrayList<String>();

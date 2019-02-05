@@ -30,6 +30,7 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -282,6 +283,7 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
      * Remove all children
      */
     public void removeAll() {
+        cancelTouch();
         super.removeAllViews();
         newPositions.clear();
         invalidate();
@@ -733,24 +735,31 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
      * @return managed the touch event or not
      */
     public boolean onTouch(View view, MotionEvent event) {
-        int action = event.getAction();
+        try {
+            int action = event.getAction();
+            switch (action & MotionEvent.ACTION_MASK) {
 
-        switch (action & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
+                    enabled = true;
+                    lastX = (int) event.getX();
+                    lastY = (int) event.getY();
+                    touching = true;
+                    break;
 
-            case MotionEvent.ACTION_DOWN:
-                enabled = true;
-                lastX = (int) event.getX();
-                lastY = (int) event.getY();
-                touching = true;
-                break;
+                case MotionEvent.ACTION_MOVE:
+                    if (!touching) return false; // event was cancelled
+                    manageMoveEvent(event);
+                    break;
 
-            case MotionEvent.ACTION_MOVE:
-                manageMoveEvent(event);
-                break;
-
-            case MotionEvent.ACTION_UP:
-                manageUpEvent();
-                break;
+                case MotionEvent.ACTION_UP:
+                    if (!touching) return false; // event was cancelled
+                    manageUpEvent();
+                    break;
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Error on onTouch. Cancelling current touch: " + e);
+            cancelTouch();
+            return false;
         }
 
         if (dragged != -1) {
@@ -758,6 +767,29 @@ public class DraggableGridView extends ViewGroup implements View.OnTouchListener
         }
 
         return false;
+    }
+
+
+    private void cancelTouch() {
+        if (!touching && dragged == -1) return; // Check the drag and the simple onClick cases
+
+        if (dragged != -1) {
+            View draggingView = getChildAt(dragged);
+            if (draggingView != null) {
+                Point xy = getCoorFromIndex(dragged);
+                draggingView.layout(xy.x, xy.y, xy.x + biggestChildWidth, xy.y + biggestChildHeight);
+                if (draggingView instanceof ImageView) {
+                    ((ImageView) draggingView).setAlpha(255);
+                }
+            }
+        }
+
+        lastTarget = -1;
+        dragged = -1;
+        hideDeleteView();
+        draggedInDeleteZone = false;
+        touching = false;
+        cancelAnimations();
     }
 
 

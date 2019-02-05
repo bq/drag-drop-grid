@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 25
-        versionCode 4
-        versionName "1.5"
+        minSdkVersion 14
+        targetSdkVersion 26
+        versionCode 5
+        versionName "1.6"
     }
     buildTypes {
         release {
@@ -23,6 +23,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile('com.bq.robotic:drag-drop-grid:1.10@aar')
+    implementation "com.android.support:appcompat-v7:26.1.0"
+    implementation "com.bq.robotic:drag-drop-grid:1.21@aar"
 }
